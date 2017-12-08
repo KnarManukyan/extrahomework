@@ -1,0 +1,151 @@
+<html>
+<head>
+<title>ping-pong</title>
+</head>
+</canvas>
+<body>
+<canvas id="canvas" width=1200 height=600></canvas>
+<script> 
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+let keys =[];
+gameData = {
+	player1: {
+		x: 50,
+		y: 200,
+		yDelta: 5,
+		width: 20,
+		height: 150,
+	},
+	player2: {
+		x: 1130,
+		y: 200,
+		yDelta: 5,
+		width: 20,
+		height: 150,
+	},
+	ball: {
+		x: 700,
+		y: 300,
+		xDelta: 5,
+		yDelta: 5,
+		r: 15,
+	}
+} 
+const player1 = gameData.player1;
+const player2 = gameData.player2;
+const ball=gameData.ball;
+const score = {
+	player1: 0,
+	player2: 0,  
+}
+
+let start = false;
+const draw = function(){
+	context.fillStyle="black";
+	context.fillRect(0, 0, canvas.width , canvas.height); 
+	if (start){
+	context.beginPath();
+	context.setLineDash([20, 15]);
+	context.moveTo(canvas.width/2, 0);
+	context.lineTo(canvas.width/2, canvas.height);
+	context.strokeStyle="white";
+	context.stroke();
+	context.font="30px Arial";
+	context.fillStyle="yellow";
+	context.beginPath();
+	context.arc(ball.x,ball.y,ball.r,0,2*Math.PI);
+	context.fill();
+	context.fillStyle="deepskyblue";
+	context.fillText(score.player1,(canvas.width/2)-100,50);
+	context.fillStyle="red";
+	context.fillText(score.player2,(canvas.width/2)+100,50);
+	context.fillStyle="deepskyblue";
+	context.fillRect(player1.x, player1.y, player1.width, player1.height);
+	context.fillStyle="red";
+	context.fillRect(player2.x, player2.y, player2.width, player2.height);
+    }
+    else{
+    context.font="100px Arial";
+	context.fillStyle="white";
+	context.fillText("Press Space to play!",140,320);
+    }
+}
+	const p1up = 87;
+	const p1down = 83;
+	const p2up = 38;
+	const p2down = 40;
+	const space = 32;
+draw();
+document.body.addEventListener("keydown", function (e) {
+    keys[e.keyCode] = true;
+});
+document.body.addEventListener("keyup", function (e) {
+    keys[e.keyCode] = false;
+});
+
+const update = function(){
+	if(keys[space]){
+			start=true;
+		}
+	if(start){
+		if(keys[p1up]) {
+      	 if(player1.y<0){
+      	 	return "";
+      	 }
+      		player1.y -= player1.yDelta;
+      	}
+		if(keys[p1down]) {
+		if(player1.y>600-player1.height){
+			return "";
+		}
+      		player1.y += player1.yDelta;
+      	}
+		if(keys[p2up]){
+		if(player2.y<0){
+			return "";
+		}
+      		player2.y -= player2.yDelta;
+      	}
+        if(keys[p2down]) {
+		if(player2.y>600-player1.height){
+      	 	return "";
+      	 }
+      		player2.y += player2.yDelta;
+      	}
+	if(ball.y+ball.r >= canvas.height){
+		ball.yDelta = -ball.yDelta;
+	}
+	if(ball.y-ball.r <= 0){
+		ball.yDelta = -ball.yDelta;
+	}
+	if((ball.y >= player1.y-2*ball.r && ball.y-ball.r <= player1.y+player1.height+2*ball.r && ball.x-ball.r === player1.x+player1.width) || (ball.y >= player2.y-2*ball.r && ball.y <= player2.y+player2.height+2*ball.r && ball.x+ball.r === player2.x)){
+		ball.xDelta = -ball.xDelta;
+		let bleep = new Audio();
+		bleep.src ="Sci Fi Button Beep SOUND Effect.mp3";
+		bleep.play();
+	}
+	if(ball.x+ball.r<0){
+    	score.player2++;
+    	ball.x = player2.x-ball.r;
+    	ball.y = player2.y+(player2.height/2);
+      	}
+    if(ball.x-ball.r>canvas.width){
+    	score.player1++;
+    	ball.x = player1.x+player1.width+ball.r;
+    	ball.y = player1.y+(player1.height/2);
+      	}
+	ball.x -= ball.xDelta;
+	ball.y -= ball.yDelta;
+}
+}
+const loop = function() {
+	context.clearRect(0,0,1200,600);
+	update();
+	draw();
+	requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>

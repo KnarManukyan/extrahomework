@@ -2,13 +2,21 @@
 <head>
 <title>ping-pong</title>
 </head>
-</canvas>
 <body>
+<style>
+    #canvas {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            bottom: 4;
+            left: 0;
+            right: 0;
+        }
+</style>
 <canvas id="canvas" width=1200 height=600></canvas>
 <script> 
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
-let keys =[];
 gameData = {
 	player1: {
 		x: 50,
@@ -39,7 +47,6 @@ const score = {
 	player1: 0,
 	player2: 0,  
 }
-
 let start = false;
 const draw = function(){
 	context.fillStyle="black";
@@ -51,11 +58,11 @@ const draw = function(){
 	context.lineTo(canvas.width/2, canvas.height);
 	context.strokeStyle="white";
 	context.stroke();
-	context.font="30px Arial";
 	context.fillStyle="yellow";
 	context.beginPath();
 	context.arc(ball.x,ball.y,ball.r,0,2*Math.PI);
 	context.fill();
+	context.font="30px Arial";
 	context.fillStyle="deepskyblue";
 	context.fillText(score.player1,(canvas.width/2)-100,50);
 	context.fillStyle="red";
@@ -76,7 +83,8 @@ const draw = function(){
 	const p2up = 38;
 	const p2down = 40;
 	const space = 32;
-draw();
+	let keys =[];
+
 document.body.addEventListener("keydown", function (e) {
     keys[e.keyCode] = true;
 });
@@ -96,7 +104,7 @@ const update = function(){
       		player1.y -= player1.yDelta;
       	}
 		if(keys[p1down]) {
-		if(player1.y>600-player1.height){
+		if(player1.y>canvas.height-player1.height){
 			return "";
 		}
       		player1.y += player1.yDelta;
@@ -108,7 +116,7 @@ const update = function(){
       		player2.y -= player2.yDelta;
       	}
         if(keys[p2down]) {
-		if(player2.y>600-player1.height){
+		if(player2.y>canvas.height-player1.height){
       	 	return "";
       	 }
       		player2.y += player2.yDelta;
@@ -119,7 +127,7 @@ const update = function(){
 	if(ball.y-ball.r <= 0){
 		ball.yDelta = -ball.yDelta;
 	}
-	if((ball.y >= player1.y-2*ball.r && ball.y-ball.r <= player1.y+player1.height+2*ball.r && ball.x-ball.r === player1.x+player1.width) || (ball.y >= player2.y-2*ball.r && ball.y <= player2.y+player2.height+2*ball.r && ball.x+ball.r === player2.x)){
+	if((ball.y >= player1.y-2*ball.r && ball.y <= player1.y+player1.height+2*ball.r && ball.x-ball.r === player1.x+player1.width) || (ball.y >= player2.y-2*ball.r && ball.y <= player2.y+player2.height+2*ball.r && ball.x+ball.r === player2.x)){
 		ball.xDelta = -ball.xDelta;
 		let bleep = new Audio();
 		bleep.src ="Sci Fi Button Beep SOUND Effect.mp3";
